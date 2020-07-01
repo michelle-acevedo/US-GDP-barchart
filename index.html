@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>bar graph of US GPD</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <script src="/script.js">
+      </script
+
+          <!-- import d3-->
+          <script src="https://unpkg.com/d3@5.16.0/dist/d3.min.js">
+    </script>
+  </head>
+
+  <body>
+    <svg width="960" height="500"></svg>
+
+    <script>
+      const svg = d3.select("svg");
+
+      const height = +svg.attr("height");
+      const width = +svg.attr("width");
+
+      const render = data => {
+        const xlabel = "Date";
+        const ylabel = "GDP";
+        const x = d => d.date;
+
+        const y = d => d.value;
+
+        const title = "United States GDP";
+        const margin = { top: 40, right: 100, bottom: 100, left: 150 };
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+
+        const xScale = d3
+          .scaleTime()
+          .domain(d3.extent(data, x))
+          .range([0, innerWidth]);
+
+        const yScale = d3
+          .scaleLinear()
+          .domain(d3.extent(data, y))
+          .range([innerHeight, 0]);
+
+        const g = svg
+          .append("g")
+          .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        const xAxis = d3
+          .axisBottom(xScale)
+          .tickSize(1)
+          .tickPadding(5);
+
+        const yAxis = d3
+          .axisLeft(yScale)
+          .tickSize(0)
+          .tickPadding(10);
+
+        const yAxisG = g.append("g").call(yAxis);
+
+        yAxisG.select(".domain").remove();
+
+        yAxisG
+          .append("text")
+          .attr("class", "axisLabel")
+          .attr("fill", "maroon")
+          .attr("x", -innerHeight / 2 + 10)
+          .attr("y", -60)
+          .attr("text-anchor", "middle")
+          .attr("transform", `rotate(-90)`)
+          .text(ylabel);
+
+        const xAxisG = g
+          .append("g")
+          .call(xAxis)
+          .attr("transform", `translate(0, ${innerHeight})`);
+
+        xAxisG.select(".domain").remove();
+
+        xAxisG
+          .append("text")
+          .attr("fill", "maroon")
+          .text(xlabel)
+          .attr("x", innerWidth / 2)
+          .attr("y", 70)
+          .attr("class", "axisLabel");
+
+        g.append("text")
+          .attr("y", -10)
+          .text(title)
+          .attr("class", "Title")
+          .attr("x", innerWidth / 2 - 100);
+
+        let div = d3
+          .select("body")
+          .append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0);
+
+        g.selectAll("rect")
+          .data(data)
+          .enter()
+          .append("rect")
+          .attr("x", d => xScale(x(d)))
+          .attr("y", d => yScale(y(d)))
+          .attr("width", 2)
+          .attr("height", d => innerHeight - yScale(y(d)))
+          .attr("fill", "navy")
+          .attr("class", "bars")
+          .on("mouseover", function(d) {
+            div
+              .transition()
+              .duration(200)
+              .style("opacity", 0.9);
+            div
+              .html(
+                `${x(d).getFullYear()} Q${
+                  x(d).getMonth() <= 3
+                    ? 1
+                    : x(d).getMonth() <= 6
+                    ? 2
+                    : x(d).getMonth() <= 9
+                    ? 3
+                    : 4
+                }` +
+                  "\n" +
+                  `$${y(d)} Billions`
+              )
+              .style("left", d3.event.pageX + "px")
+              .style("top", d3.event.pageY - 28 + "px");
+          })
+          .on("mouseout", d => {
+            div
+              .transition()
+              .duration(500)
+              .style("opacity", 0);
+          });
+      };
+
+      //.append('title')
+      //.attr('class', 'tooltip')
+      //.text(d=>`${x(d).getFullYear()} Q${(x(d).getMonth())<=3?1:(x(d).getMonth()<=6?2:(x(d).getMonth()<=9?3:4))}` +'\n' + `$${y(d)} Billions`)
+
+      d3.json(
+        "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json"
+      ).then(function(data) {
+        data.data.forEach(d => {
+          d.value = +d[1];
+          d.date = new Date(d[0]);
+        });
+
+        render(data.data);
+      });
+    </script>
+  </body>
+</html>
