@@ -134,12 +134,7 @@
                   `$${y(d)} Billions`
               )
               .style("left", d3.event.pageX + "px")
-              .style("top", d3.event.pageY - 28 + "px")
-              .style("position", "absolute")
-              .style('text-align', "center")
-              .style("width", 100 +'px')
-              .style("height", 28, + 'px)
-              .style("background", 'lightsteelblue');
+              .style("top", d3.event.pageY - 28 + "px");
  
           })
           .on("mouseout", d => {
