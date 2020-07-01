@@ -1,1 +1,1 @@
-More Information: http://www.bea.gov/national/pdf/nipaguid.pdf
+Data borrowed from: http://www.bea.gov/national/pdf/nipaguid.pdf
