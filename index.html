@@ -130,7 +130,7 @@
                     ? 3
                     : 4
                 }` +
-                  "\n" +
+                  "\\n" +
                   `$${y(d)} Billions`
               )
               .style("left", d3.event.pageX + "px")
@@ -144,9 +144,7 @@
           });
       };
 
-      //.append('title')
-      //.attr('class', 'tooltip')
-      //.text(d=>`${x(d).getFullYear()} Q${(x(d).getMonth())<=3?1:(x(d).getMonth()<=6?2:(x(d).getMonth()<=9?3:4))}` +'\n' + `$${y(d)} Billions`)
+
 
       d3.json(
         "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json"
